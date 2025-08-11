@@ -1,0 +1,21 @@
+{
+  "name": "discord-tictactoe-activity",
+  "version": "1.0.0",
+  "description": "A modern glassmorphic TicTacToe game for Discord Activities with dark/light mode support",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite --host 0.0.0.0 --port 3000"
+  },
+  "keywords": ["discord", "activity", "tictactoe", "game", "glassmorphism"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^1.0.0"
+  }
+}

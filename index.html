@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord TicTacToe</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        <!-- Header mit Mode Toggle -->
+        <header class="header">
+            <h1 class="logo">TicTacToe</h1>
+            <div class="header-controls">
+                <div class="theme-toggle" id="themeToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Game Setup Panel -->
+        <div class="setup-panel glass-panel" id="setupPanel">
+            <h2>Neues Spiel starten</h2>
+            
+            <div class="setting-group">
+                <label>Board-Größe:</label>
+                <div class="board-size-options">
+                    <button class="size-btn active" data-size="3">3x3</button>
+                    <button class="size-btn" data-size="4">4x4</button>
+                    <button class="size-btn" data-size="5">5x5</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Symbole wählen:</label>
+                <div class="symbol-selection">
+                    <div class="player-symbol">
+                        <span>Spieler 1:</span>
+                        <select id="player1Symbol">
+                            <option value="❌">❌</option>
+                            <option value="🔥">🔥</option>
+                            <option value="⭐">⭐</option>
+                            <option value="💎">💎</option>
+                            <option value="🚀">🚀</option>
+                        </select>
+                    </div>
+                    <div class="player-symbol">
+                        <span>Spieler 2:</span>
+                        <select id="player2Symbol">
+                            <option value="⭕">⭕</option>
+                            <option value="❄️">❄️</option>
+                            <option value="🌟">🌟</option>
+                            <option value="💜">💜</option>
+                            <option value="⚡">⚡</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-game-btn" id="startGameBtn">Spiel starten</button>
+        </div>
+
+        <!-- Game Board -->
+        <div class="game-container glass-panel" id="gameContainer" style="display: none;">
+            <div class="game-info">
+                <div class="current-player">
+                    <span id="currentPlayerText">Spieler 1 ist dran</span>
+                    <div class="player-indicator" id="playerIndicator">❌</div>
+                </div>
+                <button class="new-game-btn" id="newGameBtn">Neues Spiel</button>
+            </div>
+
+            <div class="board-container">
+                <div class="game-board" id="gameBoard"></div>
+            </div>
+
+            <div class="game-status" id="gameStatus">
+                <div class="status-message" id="statusMessage"></div>
+            </div>
+        </div>
+
+        <!-- Scoreboard -->
+        <div class="scoreboard glass-panel" id="scoreboard" style="display: none;">
+            <h3>Punktestand</h3>
+            <div class="score-display">
+                <div class="player-score">
+                    <span class="player-name">Spieler 1</span>
+                    <span class="score" id="player1Score">0</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="player-score">
+                    <span class="player-name">Spieler 2</span>
+                    <span class="score" id="player2Score">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spectator Info -->
+        <div class="spectator-info glass-panel" id="spectatorInfo" style="display: none;">
+            <span>👥 Zuschauer-Modus aktiv</span>
+        </div>
+    </div>
+
+    <!-- Win Animation Overlay -->
+    <div class="win-animation" id="winAnimation">
+        <div class="confetti"></div>
+        <div class="win-message" id="winMessage"></div>
+    </div>
+
+    <script type="module" src="game.js"></script>
+    <script type="module" src="discord.js"></script>
+</body>
+</html>
