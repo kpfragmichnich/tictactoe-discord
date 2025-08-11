@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   // GitHub Pages specific configuration
-  base: process.env.NODE_ENV === 'production' ? '/TacTacToe-Game/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/tictactoe-discord/' : '/',
   
   build: {
     outDir: 'dist',
@@ -10,6 +10,7 @@ export default defineConfig({
     sourcemap: false,
     minify: true,
     rollupOptions: {
+      input: 'index.html',
       output: {
         manualChunks: undefined,
       }
