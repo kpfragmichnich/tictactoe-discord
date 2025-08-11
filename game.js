@@ -179,9 +179,10 @@ class TicTacToeGame {
 
     // ===== Game Logic =====
     startNewGame() {
-        // Only allow game start if we have 2 Discord players
+        // Check if we have enough players, but allow single player for testing
         if (this.players.length < 2) {
-            this.showNotification('Warten auf 2 Spieler im Voice Channel!');
+            // Create a clear, persistent message
+            this.showWaitingForPlayersUI();
             return;
         }
         
@@ -464,6 +465,55 @@ class TicTacToeGame {
 
     closeWinAnimation() {
         this.winAnimation.classList.remove('active');
+    }
+
+    showWaitingForPlayersUI() {
+        // Hide game container and show waiting state
+        this.gameContainer.style.display = 'none';
+        this.setupPanel.style.display = 'block';
+        
+        // Create persistent waiting message
+        let waitingDiv = document.getElementById('waitingForPlayers');
+        if (!waitingDiv) {
+            waitingDiv = document.createElement('div');
+            waitingDiv.id = 'waitingForPlayers';
+            waitingDiv.className = 'waiting-players glass-panel';
+            this.setupPanel.appendChild(waitingDiv);
+        }
+        
+        const currentPlayers = this.players.length;
+        const playersNeeded = 2 - currentPlayers;
+        
+        waitingDiv.innerHTML = `
+            <div class="waiting-content">
+                <h2>👥 Warten auf Spieler</h2>
+                <div class="player-status">
+                    <div class="player-count">
+                        <span class="current">${currentPlayers}</span>
+                        <span class="separator">/</span>
+                        <span class="needed">2</span>
+                        <span class="label">Spieler</span>
+                    </div>
+                </div>
+                <p class="waiting-message">
+                    ${playersNeeded === 2 ? 
+                        'Lade einen Freund in den Voice Channel ein!' : 
+                        `Noch ${playersNeeded} Spieler benötigt`
+                    }
+                </p>
+                <div class="waiting-animation">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        `;
+        
+        // Disable start button
+        this.startGameBtn.disabled = true;
+        this.startGameBtn.style.opacity = '0.5';
+        
+        console.log(`⏳ Warten auf Spieler: ${currentPlayers}/2`);
     }
 
     showNotification(message) {
