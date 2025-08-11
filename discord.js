@@ -15,68 +15,68 @@ class DiscordActivityManager {
 
     async initialize() {
         try {
+            console.log("🚀 Initializing Discord Activity...");
+            
+            // Get Discord Client ID from env or fallback
+            const clientId = import.meta.env?.VITE_DISCORD_CLIENT_ID || "1404512938898886796";
+            console.log("Using Discord Client ID:", clientId);
+            
             // Initialize Discord SDK
-            this.discordSdk = new DiscordSDK(import.meta.env.VITE_DISCORD_CLIENT_ID);
+            this.discordSdk = new DiscordSDK(clientId);
             
             // Wait for SDK to be ready
             await this.discordSdk.ready();
-            console.log("Discord SDK is ready");
+            console.log("✅ Discord SDK is ready");
             
-            // Authorize the application
+            // Authorize the application and get permissions
             await this.authorize();
+            console.log("✅ Discord authorization complete");
             
             // Set up activity commands
             this.setupActivityCommands();
             
-            // Get participants and set up sync
-            this.setupParticipants();
+            // Get participants and set up sync  
+            await this.setupParticipants();
+            console.log("✅ Discord participants loaded");
             
         } catch (error) {
-            console.error("Failed to initialize Discord SDK:", error);
+            console.error("❌ Failed to initialize Discord SDK:", error);
+            // Show error to user
+            this.showDiscordError(error);
             // Fallback to standalone mode
             this.initializeStandaloneMode();
         }
     }
 
     async authorize() {
-        const { code } = await this.discordSdk.commands.authorize({
-            client_id: import.meta.env.VITE_DISCORD_CLIENT_ID,
-            response_type: "code",
-            state: "",
-            prompt: "none",
-            scope: [
-                "identify",
-                "guilds",
-                "rpc.activities.write",
-                "rpc.voice.read",
-            ],
-        });
+        try {
+            console.log("🔐 Starting Discord Activities authentication...");
+            
+            // For Discord Activities, we use the simpler authentication
+            // No need for manual OAuth2 flow - it's handled by Discord client
+            const auth = await this.discordSdk.commands.authenticate({
+                scopes: [
+                    "identify",
+                    "guilds",
+                    "rpc.activities.write", 
+                    "rpc.voice.read",
+                ],
+            });
 
-        // Exchange code for access token
-        const response = await fetch("/api/token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                code,
-            }),
-        });
+            if (!auth || !auth.user) {
+                throw new Error("Discord authentication returned null");
+            }
 
-        const { access_token } = await response.json();
-
-        // Authenticate with Discord
-        const auth = await this.discordSdk.commands.authenticate({
-            access_token,
-        });
-
-        if (auth == null) {
-            throw new Error("Authentication failed");
+            this.auth = auth;
+            this.currentUser = auth.user;
+            console.log("✅ Authenticated as Discord user:", this.currentUser.username);
+            
+            return auth;
+            
+        } catch (error) {
+            console.error("❌ Discord authentication failed:", error);
+            throw error;
         }
-
-        this.auth = auth;
-        this.currentUser = auth.user;
-        console.log("Authenticated as:", this.currentUser.username);
     }
 
     setupActivityCommands() {
@@ -309,6 +309,33 @@ class DiscordActivityManager {
                 }
             }
         });
+    }
+
+    showDiscordError(error) {
+        // Create error notification for Discord issues
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'discord-error glass-panel';
+        errorDiv.innerHTML = `
+            <h3>🚨 Discord Connection Error</h3>
+            <p>Das Spiel kann nicht mit Discord verbinden:</p>
+            <code>${error.message}</code>
+            <div class="error-actions">
+                <button onclick="location.reload()" class="retry-btn">Erneut versuchen</button>
+                <button onclick="this.parentElement.parentElement.remove()" class="close-btn">Schließen</button>
+            </div>
+        `;
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 400px;
+            padding: 20px;
+            z-index: 9999;
+            color: var(--text-primary);
+            text-align: center;
+        `;
+        document.body.appendChild(errorDiv);
     }
 
     // ===== Public API =====
